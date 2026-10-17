@@ -54,9 +54,7 @@ data class DeepSeekResponse(
     val choices: List<DeepSeekChoice>
 )
 
-class MediaFilterApi {
-    // ⚠️ API Key embedded in app - can be extracted! Use with caution.
-    private val apiKey = "REMOVED_EXPOSED_API_KEY"
+class MediaFilterApi(private val apiKey: String = "") {
     private val deepSeekUrl = "https://api.deepseek.com/chat/completions"
 
     private val client = HttpClient {
@@ -173,6 +171,7 @@ ${content.take(6000)}
             stream = false
         )
 
+        require(apiKey.isNotBlank()) { "Configure a DeepSeek API key at runtime." }
         val response = client.preparePost(deepSeekUrl) {
             contentType(ContentType.Application.Json)
             header("Authorization", "Bearer $apiKey")
@@ -315,6 +314,7 @@ ${request.analysisDetails ?: "无"}
             stream = true
         )
 
+        require(apiKey.isNotBlank()) { "Configure a DeepSeek API key at runtime." }
         client.preparePost(deepSeekUrl) {
             contentType(ContentType.Application.Json)
             header("Authorization", "Bearer $apiKey")
